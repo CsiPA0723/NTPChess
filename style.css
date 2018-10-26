@@ -11,8 +11,8 @@ table {
 }
 
 td {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
 }
 
 table, td {
@@ -23,15 +23,21 @@ table, td {
 
 
 .grid-container {
+    padding: 20px;
     display: grid;
-    grid-template-columns: auto auto auto;
-    padding: 10px;
+    grid-template-columns: 25% 50% 25%;
 }
 
-.grid-item {
+.grid-table {
     background-color: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(0, 0, 0, 0.8);
-    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.grid-side {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.8);
     font-size: 30px;
     text-align: center;
 }

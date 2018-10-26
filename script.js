@@ -14,6 +14,7 @@ function tableCreate() {
             var td = document.createElement('td');
             td.style.backgroundColor = `${whOrBl ? "rgb(255, 242, 230)": "rgb(255, 206, 171)"}`;
             td.id = `td${index}`;
+            td.style.backgroundImage = `url("./BlackCMs/black_king.png")`;
             tr.appendChild(td);
             index++;
             whOrBl = !whOrBl;
@@ -23,4 +24,12 @@ function tableCreate() {
     }
     tbl.appendChild(tbdy);
     body.appendChild(tbl);
+}
+
+function onClick(obj) {
+
+}
+
+function swap(frObj, toObj) {
+
 }
