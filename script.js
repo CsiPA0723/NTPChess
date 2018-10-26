@@ -3,6 +3,7 @@ function onLoad() {
 }
 
 function tableCreate() {
+    let whOrBl = false;
     let index = 0;
     var body = document.getElementById("chessTable");
     var tbl = document.createElement('table');
@@ -11,11 +12,13 @@ function tableCreate() {
         var tr = document.createElement('tr');
         for (let j = 0; j < 6; j++) {
             var td = document.createElement('td');
-            td.appendChild(document.createTextNode(`${index + 1}`));
+            td.style.backgroundColor = `${whOrBl ? "rgb(255, 242, 230)": "rgb(255, 206, 171)"}`;
             td.id = `td${index}`;
             tr.appendChild(td);
             index++;
+            whOrBl = !whOrBl;
         }
+        whOrBl = !whOrBl;
         tbdy.appendChild(tr);
     }
     tbl.appendChild(tbdy);
