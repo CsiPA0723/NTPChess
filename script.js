@@ -38,7 +38,7 @@ function tableCreate() {
                 }
                 figures.set(td.id, createFigureObj(td.id, "pawn", i == 1 ? "black" : "white", j, i, 1, td.style.backgroundImage));
             }
-            tiles.set(td.id, createTileObj(td.id, figures.get(td.id), td.style.backgroundColor));
+            tiles.set(td.id, createTileObj(td.id, figures.get(td.id) || null, td.style.backgroundColor));
             tr.appendChild(td);
             whOrBl = !whOrBl;
         }
@@ -50,13 +50,13 @@ function tableCreate() {
 }
 
 async function onClick(id) {
-    alert("onClick");
+    //alert("onClick");
     //check(id);
     var figure = figures.get(id);
     var selectedfigure = findIn(figures, "selected", true);
 
     if((figure || !selectedfigure) && turn == figure.race) {
-        if(selectedfigure) unselection(id);
+        if(selectedfigure) unselection(selectedfigure.id);
         selection(id);
     } else if(selectedfigure && (!figure || figure.race != selectedfigure.race)) {
         await move(selectedfigure.id, id);
@@ -65,31 +65,41 @@ async function onClick(id) {
 }
 
 function selection(id) {
-    alert("selection");
+    //alert("selection");
     var figure = figures.get(id);
     figure.selected = true;
     var table = document.getElementById("table");
     if(figure.race == "black") {
         if(figure.name == "pawn") {
-            if(figure.pos.y == 1) {
-                for(var i = figure.pos.y; i < figure.pos.y + 3; i++) {
-                    var cell = table.rows[i].cells[figure.pos.x];
+            for(var i = figure.pos.y - 1; i < figure.pos.y + 3; i++) {
+                var row = table.rows[i];
+                for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
+                    //alert(`i: ${i}\nj: ${j}`);
+                    var cell = row.cells[j];
+                    if(!cell) continue;
                     var tile = tiles.get(cell.id);
-                    tile.movable = true;
-                    cell.style.backgroundColor = "lightblue";
-                    tile.color = cell.style.backgroundColor;
-                }
-            } else {
-                for(var i = figure.pos.y - 1; i < figure.pos.y; i++) {
-                    var cell = table.rows[i].cells[figure.pos.x];
-                    var tile = tiles.get(cell.id);
+
+                    if(figure.pos.y != 1 && i > figure.pos.y + 1) continue;
+                    if(tile.figure) {
+                        if(figure.pos.y == 1 && i > figure.pos.y + 1) continue;
+                        if(i != figure.pos.y && j == figure.pos.x) continue;
+                        if(i < figure.pos.y + 1 && (j > figure.pos.x || j < figure.pos.x)) continue;
+                        if(tile.figure.race != figure.race) {
+                            tile.movable = true;
+                            cell.style.backgroundColor = "rgb(200, 0, 0)";
+                            tile.color = cell.style.backgroundColor;
+                        }
+                        continue;
+                    }
+
+                    if((j < figure.pos.x ) || (j > figure.pos.x)) continue;
                     tile.movable = true;
                     cell.style.backgroundColor = "lightblue";
                     tile.color = cell.style.backgroundColor;
                 }
             }
         } else if(figure.name == "bishop") {
-
+            
         } else if(figure.name == "king") {
             
         } else if(figure.name == "knight") {
@@ -101,18 +111,27 @@ function selection(id) {
         }
     } else {
         if(figure.name == "pawn") {
-            if(figure.pos.y == 8) {
-                for(var i = figure.pos.y; i > figure.pos.y - 3; i--) {
-                    var cell = table.rows[i].cells[figure.pos.x];
-                    var tile = tiles.get(cell.id);
-                    tile.movable = true;
-                    cell.style.backgroundColor = "lightblue";
-                    tile.color = cell.style.backgroundColor;
-                }
-            } else {
-                for(var i = figure.pos.y + 1; i > figure.pos.y; i--) {
-                    var cell = table.rows[i].cells[figure.pos.x];
-                    var tile = tiles.get(cell.id);
+            for(var i = figure.pos.y + 1; i > figure.pos.y - 3; i--) {
+                var row = table.rows[i];
+                for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
+                    //alert(`i: ${i}\nj: ${j}`);
+                    var cell = row.cells[j];
+                    if(!cell) continue;
+                    var tile = tiles.get(cell.id); 
+                    if(figure.pos.y != 8 && i < figure.pos.y - 1) continue;
+                    if(tile.figure) {
+                        if(figure.pos.y == 8 && i < figure.pos.y - 1) continue;
+                        if(i != figure.pos.y && j == figure.pos.x) continue;
+                        if(i > figure.pos.y - 1 && (j > figure.pos.x || j < figure.pos.x)) continue;
+                        if(tile.figure.race != figure.race) {
+                            tile.movable = true;
+                            cell.style.backgroundColor = "rgb(200, 0, 0)";
+                            tile.color = cell.style.backgroundColor;
+                        }
+                        continue;
+                    }
+
+                    if((j < figure.pos.x ) || (j > figure.pos.x)) continue;
                     tile.movable = true;
                     cell.style.backgroundColor = "lightblue";
                     tile.color = cell.style.backgroundColor;
@@ -133,7 +152,7 @@ function selection(id) {
 }
 
 function unselection(id) {
-    alert("unselection");
+    //alert("unselection");
     var figure = figures.get(id);
     figure.selected = false;
     let whOrBl = false;
@@ -153,18 +172,21 @@ function unselection(id) {
 }
 
 function move(frId, toId) {
-    alert("move");
-    if(!tiles.get(toId).movable) return;
+    //alert("move");
+    var tile = tiles.get(toId);
+    if(!tile.movable) return;
 
     var frFigure = figures.get(frId);
     var toFigure = figures.get(toId);
     var pos = toId.slice(3, toId.length - 1).split("_");
 
-    var toFigure = createFigureObj(toId, frFigure.name, frFigure.race, pos[0], pos[1], frFigure.point, frFigure.picture);
+    var toFigure = createFigureObj(toId, frFigure.name, frFigure.race, parseInt(pos[0], 10), parseInt(pos[1], 10), frFigure.point, frFigure.picture);
     figures.delete(frId);
     figures.set(toId, toFigure);
     document.getElementById(frId).style.backgroundImage = "";
     document.getElementById(toId).style.backgroundImage = toFigure.picture;
+    tiles.get(frId).figure = null;
+    tile.figure = toFigure;
     //check(toId);
     if(turn == "white") {
         turn = "black";
@@ -187,7 +209,7 @@ function createFigureObj(id, name, race, x, y, point, picture) {
         point: point,
         picture: picture,
         selected: false,
-        killable: false,
+        killed: false,
     };
     return figure;
 }
@@ -229,7 +251,7 @@ function check(id) {
             point: ${figures.get(id).point}
             picture: ${figures.get(id).picture}
             selected: ${figures.get(id).selected}
-            killable: ${figures.get(id).killable}`
+            killed: ${figures.get(id).killed}`
         );
         alert(
             `TILE
