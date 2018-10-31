@@ -73,6 +73,7 @@ function selection(id) {
         if(figure.name == "pawn") {
             for(var i = figure.pos.y - 1; i < figure.pos.y + 3; i++) {
                 var row = table.rows[i];
+                if(!row) continue;
                 for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
                     //alert(`i: ${i}\nj: ${j}`);
                     var cell = row.cells[j];
@@ -101,9 +102,29 @@ function selection(id) {
         } else if(figure.name == "bishop") {
             
         } else if(figure.name == "king") {
-            
-        } else if(figure.name == "knight") {
-            
+            for(var i = figure.pos.y - 1; i < figure.pos.y + 2; i++) {
+                var row = table.rows[i];
+                if(!row) continue;
+                for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
+                    //alert(`i: ${i}\nj: ${j}`);
+                    var cell = row.cells[j];
+                    if(!cell) continue;
+                    var tile = tiles.get(cell.id);
+
+                    if(tile.figure) {
+                        if(tile.figure.race != figure.race) {
+                            tile.movable = true;
+                            cell.style.backgroundColor = "rgb(200, 0, 0)";
+                            tile.color = cell.style.backgroundColor;
+                        }
+                        continue;
+                    }
+
+                    tile.movable = true;
+                    cell.style.backgroundColor = "lightblue";
+                    tile.color = cell.style.backgroundColor;
+                }
+            }
         } else if(figure.name == "queen") {
             
         } else if(figure.name == "rook") {
@@ -113,6 +134,7 @@ function selection(id) {
         if(figure.name == "pawn") {
             for(var i = figure.pos.y + 1; i > figure.pos.y - 3; i--) {
                 var row = table.rows[i];
+                if(!row) continue;
                 for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
                     //alert(`i: ${i}\nj: ${j}`);
                     var cell = row.cells[j];
@@ -140,9 +162,28 @@ function selection(id) {
         } else if(figure.name == "bishop") {
 
         } else if(figure.name == "king") {
-            
-        } else if(figure.name == "knight") {
-            
+            for(var i = figure.pos.y + 1; i > figure.pos.y - 2; i--) {
+                var row = table.rows[i];
+                if(!row) continue;
+                for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
+                    //alert(`i: ${i}\nj: ${j}`);
+                    var cell = row.cells[j];
+                    if(!cell) continue;
+                    var tile = tiles.get(cell.id); 
+                    if(tile.figure) {
+                        if(tile.figure.race != figure.race) {
+                            tile.movable = true;
+                            cell.style.backgroundColor = "rgb(200, 0, 0)";
+                            tile.color = cell.style.backgroundColor;
+                        }
+                        continue;
+                    }
+
+                    tile.movable = true;
+                    cell.style.backgroundColor = "lightblue";
+                    tile.color = cell.style.backgroundColor;
+                }
+            }
         } else if(figure.name == "queen") {
             
         } else if(figure.name == "rook") {
