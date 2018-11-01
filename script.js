@@ -9,12 +9,12 @@ function onLoad() {
 }
 
 async function onClick(id) {
-    //alert("onClick");
-    //check(id);
+    console.log("onClick");
+    check(id);
     var figure = figures.get(id);
     var selectedfigure = findIn(figures, "selected", true);
 
-    if((figure || !selectedfigure) && turn == figure.race) {
+    if((figure || !selectedfigure) && figure && turn == figure.race) {
         if(selectedfigure) unselection(selectedfigure.id);
         selection(id);
     } else if(selectedfigure && (!figure || figure.race != selectedfigure.race)) {
@@ -24,7 +24,7 @@ async function onClick(id) {
 }
 
 function selection(id) {
-    //alert("selection");
+    console.log("selection");
     var figure = figures.get(id);
     figure.selected = true;
     var table = document.getElementById("table");
@@ -36,7 +36,7 @@ function selection(id) {
                 for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
                     var cell = row.cells[j];
                     if(!cell) continue;
-                    //alert(`j: ${j} i: ${i}`);
+                    //console.log(`j: ${j} i: ${i}`);
                     var tile = tiles.get(cell.id);
     
                     if(figure.pos.y != 1 && i > figure.pos.y + 1) continue;
@@ -64,7 +64,7 @@ function selection(id) {
                 for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
                     var cell = row.cells[j];
                     if(!cell) continue;
-                    //alert(`j: ${j} i: ${i}`);
+                    //console.log(`j: ${j} i: ${i}`);
                     var tile = tiles.get(cell.id); 
                     if(figure.pos.y != 8 && i < figure.pos.y - 1) continue;
                     if(tile.figure) {
@@ -95,7 +95,7 @@ function selection(id) {
             for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
                 var cell = row.cells[j];
                 if(!cell) continue;
-                //alert(`j: ${j} i: ${i}`);
+                //console.log(`j: ${j} i: ${i}`);
                 var tile = tiles.get(cell.id);
 
                 if(tile.figure) {
@@ -124,109 +124,132 @@ function selection(id) {
                 var cell = row.cells[j];
                 if(!cell) continue;
                 var tile = tiles.get(cell.id);
-
+                
                 if(i != figure.pos.y && j != figure.pos.x) continue;
+                //console.log(`j: ${j} i: ${i}`);
                 if(i < figure.pos.y && up) continue;
                 if(j > figure.pos.x && right) continue;
-                //if(i > figure.pos.y && down) continue;
-                //alert(`j: ${j} i: ${i}`);
+                //console.log(`j: ${j} i: ${i}`);
                 if(tile.figure) {
+                    //console.log("tile.figure");
                     if(tile.figure.race != figure.race) {
                         cell.style.backgroundColor = "rgb(200, 0, 0)";
                         changeTile(tile, true, cell.style.backgroundColor);
+                        //console.log("rgb(200, 0, 0)");
                     }
                     //---Up
                     if(tile.figure.pos.y < figure.pos.y) {
+                        console.log("Up");
+                        //console.log("tile.figure.pos.y < figure.pos.y");
                         for(var k = tile.figure.pos.y; k > figure.pos.y - 5; k--) {
-                            //alert(`x: ${figure.pos.x}k: ${k}`);
-                            var row = table.rows[k];
-                            if(!row) continue;
-                            var cell = row.cells[figure.pos.x];
-                            if(!cell) continue;
-                            var uTile = tiles.get(cell.id);
-                            if(cell.style.backgroundColor == "lightblue") {
-                                cell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, cell.style.backgroundColor);
+                            //console.log(`x: ${figure.pos.x}k: ${k}`);
+                            var uRow = table.rows[k];
+                            if(!uRow) continue;
+                            var uCell = uRow.cells[figure.pos.x];
+                            if(!uCell) continue;
+                            var uTile = tiles.get(uCell.id);
+                            if(uCell.style.backgroundColor == "lightblue") {
+                                uCell.style.backgroundColor = uTile.originalColor;
+                                changeTile(uTile, false, uCell.style.backgroundColor);
+                                //console.log("uCell.style.backgroundColor == lightblue");
                             }
-                            changeTile(uTile, false);
+                            //console.log("VÉGE");
                         }
                         up = true;
+                        //console.log("VÉGEVÉGE");
                     }
                     //---Left
                     if(tile.figure.pos.x < figure.pos.x) {
-                        for(var k = figure.pos.x; k > tile.figure.pos.x - figure.pos.x; k--) {
-                            //alert(`k: ${k} y: ${figure.pos.y}`);
-                            var row = table.rows[figure.pos.y];
-                            if(!row) continue;
-                            var cell = row.cells[k];
-                            if(!cell) continue;
-                            var uTile = tiles.get(cell.id);
-                            if(cell.style.backgroundColor == "lightblue" || left) {
-                                cell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, cell.style.backgroundColor);
+                        console.log("Left");
+                        //console.log("tile.figure.pos.x < figure.pos.x");
+                        for(var k = figure.pos.x - 1; k > figure.pos.x - 5; k--) {
+                            //console.log(`k: ${k} y: ${figure.pos.y}`);
+                            var uRow = table.rows[figure.pos.y];
+                            if(!uRow) continue;
+                            var uCell = uRow.cells[k];
+                            if(!uCell) continue;
+                            var uTile = tiles.get(uCell.id);
+                            if(left) {
+                                uCell.style.backgroundColor = uTile.originalColor;
+                                changeTile(uTile, false, uCell.style.backgroundColor);
+                                //console.log("left");
                             }
 
-                            if(cell.style.backgroundColor == "rgb(200, 0, 0)" && k > figure.pos.x - 2) {
+                            if(uTile.figure) {
+                            //console.log("uTile.figure");
                                 left = true;
                             }
-                            changeTile(uTile, false);
-
+                            //console.log("VÉGE");
                         }
+                        left = false;
+                        //console.log("VÉGEVÉGE");
                     }
                     //---Rigth
                     if(tile.figure.pos.x > figure.pos.x) {
+                        console.log("Rigth");
+                        //console.log("tile.figure.pos.x > figure.pos.x");
                         for(var k = tile.figure.pos.x; k < figure.pos.x + 5; k++) {
-                            //alert(`k: ${k} y: ${figure.pos.y}`);
-                            var row = table.rows[figure.pos.y];
-                            if(!row) continue;
-                            var cell = row.cells[k];
-                            if(!cell) continue;
-                            var uTile = tiles.get(cell.id);
-
-                            if(cell.style.backgroundColor == "lightblue" || right) {
-                                cell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, cell.style.backgroundColor);
+                            //console.log(`k: ${k} y: ${figure.pos.y}`);
+                            var uRow = table.rows[figure.pos.y];
+                            if(!uRow) continue;
+                            var uCell = uRow.cells[k];
+                            if(!uCell) continue;
+                            var uTile = tiles.get(uCell.id);
+                            if(right) {
+                                //console.log("right");
+                                uCell.style.backgroundColor = uTile.originalColor;
+                                changeTile(uTile, false, uCell.style.backgroundColor);
+                                
                             }
 
-                            if(cell.style.backgroundColor == "rgb(200, 0, 0)" && k < figure.pos.x + 5) {
+                            if(uTile.figure) {
+                                //console.log("uTile.figure");
                                 right = true;
                             }
-                            changeTile(uTile, false);
+                            //console.log("VÉGE");
                         }
+                        //console.log("VÉGEVÉGE");
                     }
                     //---Down
                     if(tile.figure.pos.y > figure.pos.y) {
-                        for(var k = figure.pos.y; k < figure.pos.y + 5; k++) {
-                            //alert(`x: ${figure.pos.x}k: ${k}`);
-                            var row = table.rows[k];
-                            if(!row) continue;
-                            var cell = row.cells[figure.pos.x];
-                            if(!cell) continue;
-                            var uTile = tiles.get(cell.id);
-
-                            if(cell.style.backgroundColor == "lightblue"|| down) {
-                                cell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, cell.style.backgroundColor);
+                        console.log("Down");
+                        //console.log("tile.figure.pos.y > figure.pos.y");
+                        for(var k = figure.pos.y + 1; k < figure.pos.y + 5; k++) {
+                            //console.log(`x: ${figure.pos.x} k: ${k}`);
+                            var uRow = table.rows[k];
+                            if(!uRow) continue;
+                            var uCell = uRow.cells[figure.pos.x];
+                            if(!uCell) continue;
+                            var uTile = tiles.get(uCell.id);
+                            if(down) {
+                                //console.log("down");
+                                uCell.style.backgroundColor = uTile.originalColor;
+                                changeTile(uTile, false, uCell.style.backgroundColor);
+                                
                             }
 
-                            if(cell.style.backgroundColor == "rgb(200, 0, 0)" && tile.figure.pos.y - 1 < k) {
+                            if(uTile.figure) {
+                                //console.log("uTile.figure");
                                 down = true;
                             }
-                            changeTile(uTile, false);
+                            //console.log("VÉGE");
                         }
+                        down = false;
+                        //console.log("VÉGEVÉGE");
                     }
                     continue;
                 }
-
+                
                 cell.style.backgroundColor = "lightblue";
                 changeTile(tile, true, cell.style.backgroundColor);
+                //console.log("lightblue");
             }
         }
     }
 }
 
 function unselection(id) {
-    //alert("unselection");
+    console.log("unselection");
     var figure = figures.get(id);
     figure.selected = false;
     var table = document.getElementById("table");
@@ -246,7 +269,7 @@ function unselection(id) {
 }
 
 function move(frId, toId) {
-    //alert("move");
+    console.log("move");
     var tile = tiles.get(toId);
     if(!tile.movable) return;
 
@@ -261,7 +284,7 @@ function move(frId, toId) {
     document.getElementById(toId).style.backgroundImage = toFigure.picture;
     tiles.get(frId).figure = null;
     tile.figure = toFigure;
-    //check(toId);
+    check(toId);
     if(turn == "white") {
         turn = "black";
     } else {
@@ -365,7 +388,7 @@ function findIn(map, find, value) {
 
 function check(id) {
     if(figures.get(id)) {
-        alert(
+        console.log(
             `FIGURE
             id: ${id}
             name: ${figures.get(id).name}
@@ -379,7 +402,7 @@ function check(id) {
             selected: ${figures.get(id).selected}
             killed: ${figures.get(id).killed}`
         );
-        alert(
+        console.log(
             `TILE
             id: ${id}
             figure: ${tiles.get(id).figure}
@@ -388,7 +411,7 @@ function check(id) {
             movable: ${tiles.get(id).movable}`
         );
     } else {
-        alert(
+        console.log(
             `TILE
             id: ${id}
             figure: ${tiles.get(id).figure}
