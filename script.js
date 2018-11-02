@@ -1,5 +1,33 @@
-const names = ["rook", "bishop", "queen", "king", "bishop", "rook"];
-const points = [3, 2, 5, 2, 2, 3];
+const figureOrder = [
+    {
+        name: "rook",
+        point: 3
+    },
+    {
+        name: "bishop",
+        point: 2
+    },
+    {
+        name: "queen",
+        point: 5
+    },
+    {
+        name: "king",
+        point: 2
+    },
+    {
+        name: "bishop",
+        point: 2
+    },
+    {
+        name: "rook",
+        point: 5
+    }
+];
+
+const MAX_TILE_REACH = 4;
+const WIDTH = figureOrder.length;
+const HEIGTH = 10;
 var figures = new Map();
 var tiles = new Map();
 var turn = "white";
@@ -10,7 +38,7 @@ function onLoad() {
 
 async function onClick(id) {
     console.log("onClick");
-    check(id);
+    debug(id);
     var figure = figures.get(id);
     var selectedfigure = findIn(figures, "selected", true);
 
@@ -113,137 +141,33 @@ function selection(id) {
     } else if(figure.name == "queen") {
         
     } else if(figure.name == "rook") {
-        var up = false;
-        var left = false;
-        var right = false;
-        var down = false;
-        for(var i = figure.pos.y + 4; i > figure.pos.y - 5; i--) {
-            var row = table.rows[i];
-            if(!row) continue;
-            for(var j = figure.pos.x - 4; j < figure.pos.x + 5; j++) {
-                var cell = row.cells[j];
-                if(!cell) continue;
-                var tile = tiles.get(cell.id);
-                
-                if(i != figure.pos.y && j != figure.pos.x) continue;
-                //console.log(`j: ${j} i: ${i}`);
-                if(i < figure.pos.y && up) continue;
-                if(j > figure.pos.x && right) continue;
-                //console.log(`j: ${j} i: ${i}`);
-                if(tile.figure) {
-                    //console.log("tile.figure");
-                    if(tile.figure.race != figure.race) {
-                        cell.style.backgroundColor = "rgb(200, 0, 0)";
-                        changeTile(tile, true, cell.style.backgroundColor);
-                        //console.log("rgb(200, 0, 0)");
-                    }
-                    //---Up
-                    if(tile.figure.pos.y < figure.pos.y) {
-                        console.log("Up");
-                        //console.log("tile.figure.pos.y < figure.pos.y");
-                        for(var k = tile.figure.pos.y; k > figure.pos.y - 5; k--) {
-                            //console.log(`x: ${figure.pos.x}k: ${k}`);
-                            var uRow = table.rows[k];
-                            if(!uRow) continue;
-                            var uCell = uRow.cells[figure.pos.x];
-                            if(!uCell) continue;
-                            var uTile = tiles.get(uCell.id);
-                            if(uCell.style.backgroundColor == "lightblue") {
-                                uCell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, uCell.style.backgroundColor);
-                                //console.log("uCell.style.backgroundColor == lightblue");
-                            }
-                            //console.log("VÉGE");
-                        }
-                        up = true;
-                        //console.log("VÉGEVÉGE");
-                    }
-                    //---Left
-                    if(tile.figure.pos.x < figure.pos.x) {
-                        console.log("Left");
-                        //console.log("tile.figure.pos.x < figure.pos.x");
-                        for(var k = figure.pos.x - 1; k > figure.pos.x - 5; k--) {
-                            //console.log(`k: ${k} y: ${figure.pos.y}`);
-                            var uRow = table.rows[figure.pos.y];
-                            if(!uRow) continue;
-                            var uCell = uRow.cells[k];
-                            if(!uCell) continue;
-                            var uTile = tiles.get(uCell.id);
-                            if(left) {
-                                uCell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, uCell.style.backgroundColor);
-                                //console.log("left");
-                            }
+        for(var x = 1; x < 5; x++) {
+            if(figure.pos.x + x > 5) break;
+            var cell = table.rows[figure.pos.y].cells[figure.pos.x + x];
+            var tile = tiles.get(cell.id);
 
-                            if(uTile.figure) {
-                            //console.log("uTile.figure");
-                                left = true;
-                            }
-                            //console.log("VÉGE");
-                        }
-                        left = false;
-                        //console.log("VÉGEVÉGE");
-                    }
-                    //---Rigth
-                    if(tile.figure.pos.x > figure.pos.x) {
-                        console.log("Rigth");
-                        //console.log("tile.figure.pos.x > figure.pos.x");
-                        for(var k = tile.figure.pos.x; k < figure.pos.x + 5; k++) {
-                            //console.log(`k: ${k} y: ${figure.pos.y}`);
-                            var uRow = table.rows[figure.pos.y];
-                            if(!uRow) continue;
-                            var uCell = uRow.cells[k];
-                            if(!uCell) continue;
-                            var uTile = tiles.get(uCell.id);
-                            if(right) {
-                                //console.log("right");
-                                uCell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, uCell.style.backgroundColor);
-                                
-                            }
+            if(checkTile(cell, tile, figure)) break;
+        }
+        for(var x = 1; x < 5; x++) {
+            if(figure.pos.x - x < 0) break;
+            var cell = table.rows[figure.pos.y].cells[figure.pos.x - x];
+            var tile = tiles.get(cell.id);
 
-                            if(uTile.figure) {
-                                //console.log("uTile.figure");
-                                right = true;
-                            }
-                            //console.log("VÉGE");
-                        }
-                        //console.log("VÉGEVÉGE");
-                    }
-                    //---Down
-                    if(tile.figure.pos.y > figure.pos.y) {
-                        console.log("Down");
-                        //console.log("tile.figure.pos.y > figure.pos.y");
-                        for(var k = figure.pos.y + 1; k < figure.pos.y + 5; k++) {
-                            //console.log(`x: ${figure.pos.x} k: ${k}`);
-                            var uRow = table.rows[k];
-                            if(!uRow) continue;
-                            var uCell = uRow.cells[figure.pos.x];
-                            if(!uCell) continue;
-                            var uTile = tiles.get(uCell.id);
-                            if(down) {
-                                //console.log("down");
-                                uCell.style.backgroundColor = uTile.originalColor;
-                                changeTile(uTile, false, uCell.style.backgroundColor);
-                                
-                            }
+            if(checkTile(cell, tile, figure)) break;
+        }
+        for(var y = 1; y < 5; y++) {
+            if(figure.pos.y + y > 9) break;
+            var cell = table.rows[figure.pos.y + y].cells[figure.pos.x];
+            var tile = tiles.get(cell.id);
 
-                            if(uTile.figure) {
-                                //console.log("uTile.figure");
-                                down = true;
-                            }
-                            //console.log("VÉGE");
-                        }
-                        down = false;
-                        //console.log("VÉGEVÉGE");
-                    }
-                    continue;
-                }
-                
-                cell.style.backgroundColor = "lightblue";
-                changeTile(tile, true, cell.style.backgroundColor);
-                //console.log("lightblue");
-            }
+            if(checkTile(cell, tile, figure)) break;
+        }
+        for(var y = 1; y < 5; y++) {
+            if(figure.pos.y - y < 0) break;
+            var cell = table.rows[figure.pos.y - y].cells[figure.pos.x];
+            var tile = tiles.get(cell.id);
+
+            if(checkTile(cell, tile, figure)) break;
         }
     }
 }
@@ -284,7 +208,7 @@ function move(frId, toId) {
     document.getElementById(toId).style.backgroundImage = toFigure.picture;
     tiles.get(frId).figure = null;
     tile.figure = toFigure;
-    check(toId);
+    debug(toId);
     if(turn == "white") {
         turn = "black";
     } else {
@@ -294,15 +218,29 @@ function move(frId, toId) {
     unselection(toId);
 }
 
+function checkTile(cell, tile, figure) {
+    if(tile.figure) {
+        if(tile.figure.race != figure.race) {
+            cell.style.backgroundColor = "rgb(200, 0, 0)";
+            changeTile(tile, true, cell.style.backgroundColor);
+        }
+        return true;
+    }
+
+    cell.style.backgroundColor = "lightblue";
+    changeTile(tile, true, cell.style.backgroundColor);
+    return false;
+}
+
 function tableCreate() {
     let whOrBl = false;
     var body = document.getElementById("chessTable");
     var tbl = document.createElement('table');
     tbl.id = "table";
     var tbdy = document.createElement('tbody');
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < HEIGTH; i++) {
         var tr = document.createElement('tr');
-        for (let j = 0; j < 6; j++) {
+        for (let j = 0; j < WIDTH; j++) {
             var td = document.createElement('td');
             td.innerHTML = `${j} ${i}`;
             td.style.color = "rgb(100, 200, 200)";
@@ -311,14 +249,14 @@ function tableCreate() {
             td.style.backgroundSize = "100%";
             td.style.backgroundRepeat = "no-repeat";
             td.onclick = function() {onClick(this.id)};
-            if(i == 0 || i == 9) {
+            if(i == 0 || i == HEIGTH - 1) {
                 if(i == 0){
-                    td.style.backgroundImage = `url("./BlackCMs/black_${names[j]}.png")`;
+                    td.style.backgroundImage = `url("./BlackCMs/black_${figureOrder[j].name}.png")`;
                 } else {
-                    td.style.backgroundImage = `url("./WhiteCMs/white_${names[j]}.png")`;
+                    td.style.backgroundImage = `url("./WhiteCMs/white_${figureOrder[j].name}.png")`;
                 }
-                figures.set(td.id, createFigureObj(td.id, names[j], i == 0 ? "black" : "white", j, i, points[j], td.style.backgroundImage));
-            } else if (i == 1 || i == 8) {
+                figures.set(td.id, createFigureObj(td.id, figureOrder[j].name, i == 0 ? "black" : "white", j, i, figureOrder[j].point, td.style.backgroundImage));
+            } else if (i == 1 || i == HEIGTH - 2) {
                 if(i == 1) {
                     td.style.backgroundImage = `url("./BlackCMs/black_pawn.png")`;
                 } else {
@@ -386,7 +324,7 @@ function findIn(map, find, value) {
     return false;
 }
 
-function check(id) {
+function debug(id) {
     if(figures.get(id)) {
         console.log(
             `FIGURE
