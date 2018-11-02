@@ -28,6 +28,7 @@ const figureOrder = [
 const MAX_TILE_REACH = 4;
 const WIDTH = figureOrder.length;
 const HEIGTH = 10;
+const DEBUG = true;
 var figures = new Map();
 var tiles = new Map();
 var turn = "white";
@@ -37,8 +38,8 @@ function onLoad() {
 }
 
 async function onClick(id) {
-    console.log("onClick");
-    debug(id);
+    if(DEBUG) console.log("onClick");
+    if(DEBUG) debug(id);
     var figure = figures.get(id);
     var selectedfigure = findIn(figures, "selected", true);
 
@@ -52,68 +53,72 @@ async function onClick(id) {
 }
 
 function selection(id) {
-    console.log("selection");
+    if(DEBUG) console.log("selection");
     var figure = figures.get(id);
     figure.selected = true;
     var table = document.getElementById("table");
     if(figure.name == "pawn") {
+        var upOrDown = true;
+        var upDblMov = 2;
+        var downDblMov = 2;
+
         if(figure.race == "black") {
-            for(var i = figure.pos.y - 1; i < figure.pos.y + 3; i++) {
-                var row = table.rows[i];
-                if(!row) continue;
-                for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
-                    var cell = row.cells[j];
-                    if(!cell) continue;
-                    //console.log(`j: ${j} i: ${i}`);
-                    var tile = tiles.get(cell.id);
+            upOrDown = false;
+            if(figure.pos.y == 1) downDblMov = 3;
+        } else if(figure.race == "white") {
+            upOrDown = true;
+            if(figure.pos.y == HEIGTH - 2) upDblMov = 3;
+        }
+
+        var posY;
+        if(upOrDown) posY = figure.pos.y - 1;
+        else posY = figure.pos.y + 1;
+        var row = table.rows[posY];
+        if(row) {
+            var rightCell = row.cells[figure.pos.x + 1];
+            var leftCell = row.cells[figure.pos.x - 1];
+            if(rightCell) {
+                var tile = tiles.get(rightCell.id);
     
-                    if(figure.pos.y != 1 && i > figure.pos.y + 1) continue;
-                    if(tile.figure) {
-                        if(figure.pos.y == 1 && i > figure.pos.y + 1) continue;
-                        if(i != figure.pos.y && j == figure.pos.x) continue;
-                        if(i < figure.pos.y + 1 && (j > figure.pos.x || j < figure.pos.x)) continue;
-                        if(tile.figure.race != figure.race) {
-                            cell.style.backgroundColor = "rgb(200, 0, 0)";
-                            changeTile(tile, true, cell.style.backgroundColor);
-                        }
-                        continue;
-                    }
-    
-                    if((j < figure.pos.x ) || (j > figure.pos.x)) continue;
-    
-                    cell.style.backgroundColor = "lightblue";
-                    changeTile(tile, true, cell.style.backgroundColor);
+                if(tile.figure && tile.figure.race != figure.race) {
+                    rightCell.style.backgroundColor = "rgb(200, 0, 0)";
+                    changeTile(tile, true, rightCell.style.backgroundColor);
                 }
             }
-        } else {
-            for(var i = figure.pos.y + 1; i > figure.pos.y - 3; i--) {
-                var row = table.rows[i];
-                if(!row) continue;
-                for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
-                    var cell = row.cells[j];
-                    if(!cell) continue;
-                    //console.log(`j: ${j} i: ${i}`);
-                    var tile = tiles.get(cell.id); 
-                    if(figure.pos.y != 8 && i < figure.pos.y - 1) continue;
-                    if(tile.figure) {
-                        if(figure.pos.y == 8 && i < figure.pos.y - 1) continue;
-                        if(i != figure.pos.y && j == figure.pos.x) continue;
-                        if(i > figure.pos.y - 1 && (j > figure.pos.x || j < figure.pos.x)) continue;
-                        if(tile.figure.race != figure.race) {
-                            cell.style.backgroundColor = "rgb(200, 0, 0)";
-                            changeTile(tile, true, cell.style.backgroundColor);
-                        }
-                        continue;
-                    }
-
-                    if((j < figure.pos.x ) || (j > figure.pos.x)) continue;
-
-                    cell.style.backgroundColor = "lightblue";
-                    changeTile(tile, true, cell.style.backgroundColor);
+            if(leftCell) {
+                var tile = tiles.get(leftCell.id);
+    
+                if(tile.figure && tile.figure.race != figure.race) {
+                    leftCell.style.backgroundColor = "rgb(200, 0, 0)";
+                    changeTile(tile, true, leftCell.style.backgroundColor);
                 }
             }
         }
-        
+
+        //--DOWN
+        for(var y = 1; y < downDblMov; y++) {
+            if(figure.pos.y + y > HEIGTH - 1) break;
+            var cell = table.rows[figure.pos.y + y].cells[figure.pos.x];
+            var tile = tiles.get(cell.id);
+
+            if(tile.figure) break;
+            else {
+                cell.style.backgroundColor = "lightblue";
+                changeTile(tile, true, cell.style.backgroundColor);
+            }
+        }
+        //--UP
+        for(var y = 1; y < upDblMov; y++) {
+            if(figure.pos.y - y < 0) break;
+            var cell = table.rows[figure.pos.y - y].cells[figure.pos.x];
+            var tile = tiles.get(cell.id);
+
+            if(tile.figure) break;
+            else {
+                cell.style.backgroundColor = "lightblue";
+                changeTile(tile, true, cell.style.backgroundColor);
+            }
+        }
     } else if(figure.name == "bishop") {
         //--LEFT-UP
         for(var x = 1; x < 5; x++) {
@@ -154,7 +159,7 @@ function selection(id) {
             for(var j = figure.pos.x - 1; j < figure.pos.x + 2; j++) {
                 var cell = row.cells[j];
                 if(!cell) continue;
-                //console.log(`j: ${j} i: ${i}`);
+                if(DEBUG) console.log(`j: ${j} i: ${i}`);
                 var tile = tiles.get(cell.id);
 
                 if(tile.figure) {
@@ -218,7 +223,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
-        //--UP
+        //--DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x];
@@ -226,7 +231,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
-        //--DOWN
+        //--UP
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y - y < 0) break;
             var cell = table.rows[figure.pos.y - y].cells[figure.pos.x];
@@ -251,7 +256,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
-        //--UP
+        //--DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x];
@@ -259,7 +264,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
-        //--DOWN
+        //--UP
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y - y < 0) break;
             var cell = table.rows[figure.pos.y - y].cells[figure.pos.x];
@@ -271,7 +276,7 @@ function selection(id) {
 }
 
 function unselection(id) {
-    console.log("unselection");
+    if(DEBUG) console.log("unselection");
     var figure = figures.get(id);
     figure.selected = false;
     var table = document.getElementById("table");
@@ -291,7 +296,7 @@ function unselection(id) {
 }
 
 function move(frId, toId) {
-    console.log("move");
+    if(DEBUG) console.log("move");
     var tile = tiles.get(toId);
     if(!tile.movable) return;
 
@@ -306,7 +311,7 @@ function move(frId, toId) {
     document.getElementById(toId).style.backgroundImage = toFigure.picture;
     tiles.get(frId).figure = null;
     tile.figure = toFigure;
-    debug(toId);
+    if(DEBUG) debug(toId);
     if(turn == "white") {
         turn = "black";
     } else {
@@ -424,7 +429,7 @@ function findIn(map, find, value) {
 
 function debug(id) {
     if(figures.get(id)) {
-        console.log(
+        if(DEBUG) console.log(
             `FIGURE
             id: ${id}
             name: ${figures.get(id).name}
@@ -438,7 +443,7 @@ function debug(id) {
             selected: ${figures.get(id).selected}
             killed: ${figures.get(id).killed}`
         );
-        console.log(
+        if(DEBUG) console.log(
             `TILE
             id: ${id}
             figure: ${tiles.get(id).figure}
@@ -447,7 +452,7 @@ function debug(id) {
             movable: ${tiles.get(id).movable}`
         );
     } else {
-        console.log(
+        if(DEBUG) console.log(
             `TILE
             id: ${id}
             figure: ${tiles.get(id).figure}
