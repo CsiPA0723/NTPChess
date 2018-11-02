@@ -115,6 +115,7 @@ function selection(id) {
         }
         
     } else if(figure.name == "bishop") {
+        //--LEFT-UP
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x - x < 0 || figure.pos.y - x < 0) break;
             var cell = table.rows[figure.pos.y - x].cells[figure.pos.x - x];
@@ -122,6 +123,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--RIGHT-UP
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x + x > WIDTH - 1 || figure.pos.y - x < 0) break;
             var cell = table.rows[figure.pos.y - x].cells[figure.pos.x + x];
@@ -129,6 +131,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--LEFT-DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1 || figure.pos.x - y < 0) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x - y];
@@ -136,6 +139,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--RIGHT-DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1 || figure.pos.x + y > WIDTH - 1) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x + y];
@@ -166,6 +170,7 @@ function selection(id) {
             }
         }
     } else if(figure.name == "queen") {
+        //--LEFT-UP
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x - x < 0 || figure.pos.y - x < 0) break;
             var cell = table.rows[figure.pos.y - x].cells[figure.pos.x - x];
@@ -173,6 +178,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--RIGHT-UP
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x + x > WIDTH - 1 || figure.pos.y - x < 0) break;
             var cell = table.rows[figure.pos.y - x].cells[figure.pos.x + x];
@@ -180,6 +186,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--LEFT-DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1 || figure.pos.x - y < 0) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x - y];
@@ -187,6 +194,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--RIGHT-DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1 || figure.pos.x + y > WIDTH - 1) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x + y];
@@ -194,6 +202,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--RIGHT
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x + x > WIDTH - 1) break;
             var cell = table.rows[figure.pos.y].cells[figure.pos.x + x];
@@ -201,6 +210,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--LEFT
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x - x < 0) break;
             var cell = table.rows[figure.pos.y].cells[figure.pos.x - x];
@@ -208,6 +218,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--UP
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x];
@@ -215,6 +226,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y - y < 0) break;
             var cell = table.rows[figure.pos.y - y].cells[figure.pos.x];
@@ -223,6 +235,7 @@ function selection(id) {
             if(checkTile(cell, tile, figure)) break;
         }
     } else if(figure.name == "rook") {
+        //--RIGHT
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x + x > WIDTH - 1) break;
             var cell = table.rows[figure.pos.y].cells[figure.pos.x + x];
@@ -230,6 +243,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--LEFT
         for(var x = 1; x < 5; x++) {
             if(figure.pos.x - x < 0) break;
             var cell = table.rows[figure.pos.y].cells[figure.pos.x - x];
@@ -237,6 +251,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--UP
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y + y > HEIGTH - 1) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x];
@@ -244,6 +259,7 @@ function selection(id) {
 
             if(checkTile(cell, tile, figure)) break;
         }
+        //--DOWN
         for(var y = 1; y < 5; y++) {
             if(figure.pos.y - y < 0) break;
             var cell = table.rows[figure.pos.y - y].cells[figure.pos.x];
