@@ -115,7 +115,34 @@ function selection(id) {
         }
         
     } else if(figure.name == "bishop") {
-        
+        for(var x = 1; x < 5; x++) {
+            if(figure.pos.x - x < 0 || figure.pos.y - x < 0) break;
+            var cell = table.rows[figure.pos.y - x].cells[figure.pos.x - x];
+            var tile = tiles.get(cell.id);
+
+            if(checkTile(cell, tile, figure)) break;
+        }
+        for(var x = 1; x < 5; x++) {
+            if(figure.pos.x + x > WIDTH - 1 || figure.pos.y - x < 0) break;
+            var cell = table.rows[figure.pos.y - x].cells[figure.pos.x + x];
+            var tile = tiles.get(cell.id);
+
+            if(checkTile(cell, tile, figure)) break;
+        }
+        for(var y = 1; y < 5; y++) {
+            if(figure.pos.y + y > HEIGTH - 1 || figure.pos.x - y < 0) break;
+            var cell = table.rows[figure.pos.y + y].cells[figure.pos.x - y];
+            var tile = tiles.get(cell.id);
+
+            if(checkTile(cell, tile, figure)) break;
+        }
+        for(var y = 1; y < 5; y++) {
+            if(figure.pos.y + y > HEIGTH - 1 || figure.pos.x + y > WIDTH - 1) break;
+            var cell = table.rows[figure.pos.y + y].cells[figure.pos.x + y];
+            var tile = tiles.get(cell.id);
+
+            if(checkTile(cell, tile, figure)) break;
+        }
     } else if(figure.name == "king") {
         for(var i = figure.pos.y - 1; i < figure.pos.y + 2; i++) {
             var row = table.rows[i];
@@ -142,7 +169,7 @@ function selection(id) {
         
     } else if(figure.name == "rook") {
         for(var x = 1; x < 5; x++) {
-            if(figure.pos.x + x > 5) break;
+            if(figure.pos.x + x > WIDTH - 1) break;
             var cell = table.rows[figure.pos.y].cells[figure.pos.x + x];
             var tile = tiles.get(cell.id);
 
@@ -156,7 +183,7 @@ function selection(id) {
             if(checkTile(cell, tile, figure)) break;
         }
         for(var y = 1; y < 5; y++) {
-            if(figure.pos.y + y > 9) break;
+            if(figure.pos.y + y > HEIGTH - 1) break;
             var cell = table.rows[figure.pos.y + y].cells[figure.pos.x];
             var tile = tiles.get(cell.id);
 
