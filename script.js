@@ -35,9 +35,11 @@ var turn = "white";
 
 function onLoad() {
     tableCreate();
+
+
 }
 
-async function onClick(id) {
+function onClick(id) {
     if(DEBUG) console.log("onClick");
     if(DEBUG) debug(id);
     var figure = figures.get(id);
@@ -47,9 +49,8 @@ async function onClick(id) {
         if(selectedfigure) unselection(selectedfigure.id);
         selection(id);
     } else if(selectedfigure && (!figure || figure.race != selectedfigure.race)) {
-        await move(selectedfigure.id, id);
+        move(selectedfigure.id, id);
     }
-    
 }
 
 function selection(id) {
@@ -461,4 +462,12 @@ function debug(id) {
             movable: ${tiles.get(id).movable}`
         );
     }
+}
+
+function onDebug() {
+
+}
+
+function onSubmit() {
+
 }

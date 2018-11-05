@@ -9,15 +9,22 @@
     <body onload="onLoad()">
         <div class="grid-container">
             <div class="grid-side">
-                <p></p>
+                <p>
+                    <input id="turn-input" type="number" value="20">
+                    <button id="turn-input-button" onclick="onSubmit()">Submit</button>
+                </p>
+                <p id="turns"></p>
+                <p id="information"></p>
+                <p><button id="debug-button" onclick="onDebug()">DEBUG OFF</button></p>
             </div>
             <div class="grid-table">
                 <p id="chessTable"></p>
             </div>
             <div class="grid-side">
-                <p></p>
+                <p id="bPoints"></p>
+                <p id="nTurn"></p>
+                <p id="wPoints"></p>
             </div>
         </div>
-
     </body>
 </html>
