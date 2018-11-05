@@ -28,18 +28,29 @@ const figureOrder = [
 const MAX_TILE_REACH = 4;
 const WIDTH = figureOrder.length;
 const HEIGTH = 10;
-const DEBUG = false;
+var DEBUG = false;
 var figures = new Map();
 var tiles = new Map();
+
+var started = false;
+var ended = false;
+
 var turn = "white";
+var maxTurn = 20;
+var nTurn = 0;
+
+var whitePoints = 0;
+var blackPoints = 0;
 
 function onLoad() {
     tableCreate();
-
-
+    document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+    document.getElementById("information").innerHTML = "information";
+    changeTexts();
 }
 
 function onClick(id) {
+    if(!started || ended) return;
     if(DEBUG) console.log("onClick");
     if(DEBUG) debug(id);
     var figure = figures.get(id);
@@ -286,6 +297,10 @@ function unselection(id) {
         for (let j = 0; j < 6; j++) {
             var cell = row.cells[j];
             var tile = tiles.get(cell.id);
+            if(DEBUG) cell.innerHTML = `${j} ${i}`;
+            else cell.innerHTML = "";
+            if(DEBUG) cell.style.color = "rgb(100, 200, 200)";
+            else cell.style.color = "";
             if(tile.color != "green") {
                 cell.style.backgroundColor = tile.originalColor;
                 changeTile(tile, false, cell.style.backgroundColor);
@@ -305,21 +320,32 @@ function move(frId, toId) {
     var toFigure = figures.get(toId);
     var pos = toId.slice(3, toId.length - 1).split("_");
 
-    var toFigure = createFigureObj(toId, frFigure.name, frFigure.race, parseInt(pos[0], 10), parseInt(pos[1], 10), frFigure.point, frFigure.picture);
-    figures.delete(frId);
-    figures.set(toId, toFigure);
-    document.getElementById(frId).style.backgroundImage = "";
-    document.getElementById(toId).style.backgroundImage = toFigure.picture;
-    tiles.get(frId).figure = null;
-    tile.figure = toFigure;
-    if(DEBUG) debug(toId);
     if(turn == "white") {
+        if(toFigure && toFigure.race != turn) {
+            whitePoints += toFigure.point;
+        }
         turn = "black";
     } else {
+        if(toFigure && toFigure.race != turn) {
+            blackPoints += toFigure.point;
+        }
         turn = "white";
+        nTurn++;
     }
+
+    var nToFigure = createFigureObj(toId, frFigure.name, frFigure.race, parseInt(pos[0], 10), parseInt(pos[1], 10), frFigure.point, frFigure.picture);
+    figures.delete(frId);
+    figures.set(toId, nToFigure);
+    document.getElementById(frId).style.backgroundImage = "";
+    document.getElementById(toId).style.backgroundImage = nToFigure.picture;
+    tiles.get(frId).figure = null;
+    tile.figure = nToFigure;
+    if(DEBUG) debug(toId);
+
     
     unselection(toId);
+
+    changeTexts();
 }
 
 function checkTile(cell, tile, figure) {
@@ -348,7 +374,7 @@ function tableCreate() {
             var td = document.createElement('td');
             if(DEBUG) td.innerHTML = `${j} ${i}`;
             if(DEBUG) td.style.color = "rgb(100, 200, 200)";
-            td.style.backgroundColor = `${whOrBl ? "rgb(255, 242, 230)": "rgb(255, 206, 171)"}`;
+            td.style.backgroundColor = `${whOrBl ? "rgb(242, 210, 147)": "rgb(130, 68, 24)"}`;
             td.id = `td(${j}_${i})`;
             td.style.backgroundSize = "100%";
             td.style.backgroundRepeat = "no-repeat";
@@ -465,9 +491,23 @@ function debug(id) {
 }
 
 function onDebug() {
-
+    DEBUG = !DEBUG;
+    document.getElementById("debug-button").innerText = `DEBUG ${DEBUG ? "ON" : "OFF"}`;
 }
 
 function onSubmit() {
+    maxTurn = document.getElementById("turn-input").value;
+    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
+    started = true;
+    document.getElementById("turn-input").setAttribute("readonly", true);
+    document.getElementById("turn-input-button").setAttribute("disabled", true);
+    document.getElementById("table-grid").style.backgroundColor = "";
+}
 
+function changeTexts() {
+    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
+
+    document.getElementById("bPoints").innerHTML = "" + blackPoints;
+    document.getElementById("nTurn").innerHTML = "" + turn;
+    document.getElementById("wPoints").innerHTML = "" + whitePoints;
 }
