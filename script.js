@@ -1,3 +1,16 @@
+const information = `A megjelenítésben legyenek megkülönböztetve a két játékos bábui (más színű szöveg). Még több pontért szövegek helyett képek jelöljék a bábukat.
+A sakk játék szabályaihoz képest itt lesz egy pár eltérés:
+A tábla nem 8x8 méretű, hanem 6 oszlopból és 10 sorból áll.
+Nincs Huszár a játékban, egyébként kezdetben a felállás a hagyományos sakkal egyezik meg.
+Nincsen sakk, sem matt, a Király is csak egy leüthető figura, mint a többi.
+A Gyalog léphet visszafelé is, továbbra is csak egy mezőt, viszont ütni nem tud hátra, csak előre.
+A Bástyának, Futónak, és Vezérnek a lépése maximum 4 mező távolságra korlátozott.
+Az ellenfél alapvonalát elérő gyalog nem alakul át semmivé, hanem úgy marad.
+Az a játékos nyer, aki először szedi le az ellenfele minden bábuját.
+Egy figurára kattintva a játék jelezze ki, hogy a figura mely mezőkre léphet, figyelembe véve a lépés szabályait.
+Minden figurához legyen pont érték rendelve: Gyalog 1, Futó 2, Király 2, Bástya 3, Vezér 5. Minden játékoshoz látszódjon egy pontszám, hogy az ellenfétől összesen mennyi pont értékben szedett le figurát.
+Legyen egy körszámláló a játékban. A játék indításakor az oldal kérje be a körök számát. Ha ennyi kör alatt senki sem nyer, a játszma akkor is érjen véget, és az oldal hirdessen győztest a leütött figurák pontjai alapján.`;
+
 const figureOrder = [
     {
         name: "rook",
@@ -45,8 +58,26 @@ var blackPoints = 0;
 function onLoad() {
     tableCreate();
     document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
-    document.getElementById("information").innerHTML = "information";
+    document.getElementById("information").innerHTML = information;
     changeTexts();
+
+    var main = setInterval(() => {
+        if(ended) {
+            document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+
+            if(whitePoints > blackPoints) {
+                document.getElementById("turns").innerHTML += "<br>Winner: White";
+            } else if(whitePoints < blackPoints) {
+                document.getElementById("turns").innerHTML += "<br>Winner: Black";
+            } else {
+                document.getElementById("turns").innerHTML += "<br>Draw";
+            }
+
+            reset();
+
+            clearInterval(main);
+        }
+    }, 250);
 }
 
 function onClick(id) {
@@ -330,7 +361,10 @@ function move(frId, toId) {
             blackPoints += toFigure.point;
         }
         turn = "white";
+
         nTurn++;
+
+        if(maxTurn < nTurn) ended = true;
     }
 
     var nToFigure = createFigureObj(toId, frFigure.name, frFigure.race, parseInt(pos[0], 10), parseInt(pos[1], 10), frFigure.point, frFigure.picture);
@@ -345,7 +379,7 @@ function move(frId, toId) {
     
     unselection(toId);
 
-    changeTexts();
+    if(!ended) changeTexts();
 }
 
 function checkTile(cell, tile, figure) {
@@ -510,4 +544,28 @@ function changeTexts() {
     document.getElementById("bPoints").innerHTML = "" + blackPoints;
     document.getElementById("nTurn").innerHTML = "" + turn;
     document.getElementById("wPoints").innerHTML = "" + whitePoints;
+}
+
+function reset() {
+    figures = new Map();
+    tiles = new Map();
+
+    started = false;
+    ended = false;
+
+    turn = "white";
+    maxTurn = 20;
+    nTurn = 0;
+
+    whitePoints = 0;
+    blackPoints = 0;
+    document.getElementById("turn-input").removeAttribute("readonly");
+    document.getElementById("turn-input-button").removeAttribute("disabled");
+
+    document.getElementById("table").innerHTML = "";
+    tableCreate();
+
+    document.getElementById("turn-input").value = maxTurn;
+
+    changeTexts();
 }
