@@ -1,15 +1,4 @@
-const information = `A megjelenítésben legyenek megkülönböztetve a két játékos bábui (más színű szöveg). Még több pontért szövegek helyett képek jelöljék a bábukat.
-A sakk játék szabályaihoz képest itt lesz egy pár eltérés:
-A tábla nem 8x8 méretű, hanem 6 oszlopból és 10 sorból áll.
-Nincs Huszár a játékban, egyébként kezdetben a felállás a hagyományos sakkal egyezik meg.
-Nincsen sakk, sem matt, a Király is csak egy leüthető figura, mint a többi.
-A Gyalog léphet visszafelé is, továbbra is csak egy mezőt, viszont ütni nem tud hátra, csak előre.
-A Bástyának, Futónak, és Vezérnek a lépése maximum 4 mező távolságra korlátozott.
-Az ellenfél alapvonalát elérő gyalog nem alakul át semmivé, hanem úgy marad.
-Az a játékos nyer, aki először szedi le az ellenfele minden bábuját.
-Egy figurára kattintva a játék jelezze ki, hogy a figura mely mezőkre léphet, figyelembe véve a lépés szabályait.
-Minden figurához legyen pont érték rendelve: Gyalog 1, Futó 2, Király 2, Bástya 3, Vezér 5. Minden játékoshoz látszódjon egy pontszám, hogy az ellenfétől összesen mennyi pont értékben szedett le figurát.
-Legyen egy körszámláló a játékban. A játék indításakor az oldal kérje be a körök számát. Ha ennyi kör alatt senki sem nyer, a játszma akkor is érjen véget, és az oldal hirdessen győztest a leütött figurák pontjai alapján.`;
+const information = `information`;
 
 const figureOrder = [
     {
@@ -561,7 +550,6 @@ function reset() {
     tableCreate();
 
     main = setInterval(Main, 250);
-    timeCounter = setInterval(TimeCounter, 1000);
 
     changeTexts();
 
@@ -583,11 +571,8 @@ function Main() {
         document.getElementById("turn-input").removeAttribute("readonly");
         document.getElementById("turn-input-button").removeAttribute("disabled");
 
-        clearInterval(main);
         clearInterval(timeCounter);
-
-        delete main;
-        delete timeCounter;
+        clearInterval(main);
     }
 }
 

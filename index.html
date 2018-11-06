@@ -3,17 +3,19 @@
     <head>
         <meta charset="utf-8" />
         <title>NTP Chess</title>
+        <link rel="icon" type="image/png" href="Chess.png" />
         <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="script.js"></script>
     </head>
     <body onload="onLoad()">
         <div class="grid-container">
+            <!------------------------LEFT------------------------------>
             <div class="grid-side-top0">
                 <p>
-                    <label id="timer">00:00:00</label>
-                    <input id="turn-input" type="number" value="20"><br>
-                    <button id="turn-input-button" onclick="onSubmit()">Submit</button><br>
+                    <label id="timer">00:00:00</label><br />
+                    <input id="turn-input" type="number" value="20" /><br />
+                    <button id="turn-input-button" onclick="onSubmit()">Submit</button>
                 </p>
             </div>
             <div class="grid-side-middle0">
@@ -21,13 +23,16 @@
             </div>
             <div class="grid-side-bottom0">
                 <p>
-                    <textarea id="information" readonly></textarea><br>
+                    <label>Information</label>
+                    <textarea id="information" readonly></textarea><br />
                     <button id="debug-button" onclick="onDebug()">DEBUG OFF</button>
                 </p>
             </div>
+            <!------------------------CENTER----------------------------->
             <div id="table-grid" class="grid-table">
                 <p id="chessTable"></p>
             </div>
+            <!-----------------------RIGHT------------------------------->
             <div class="grid-side-top1">
                 <p id="bPoints"></p>
             </div>
