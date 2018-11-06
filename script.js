@@ -517,7 +517,7 @@ function onSubmit() {
     document.getElementById("turn-input").setAttribute("readonly", true);
     document.getElementById("turn-input-button").setAttribute("disabled", true);
     document.getElementById("table-grid").style.backgroundColor = "";
-    document.getElementById("nTurn").innerHTML = turn;
+    document.getElementById("nTurn").innerHTML = capitalizeFirstLetter(turn);
 
     timeCounter = setInterval(TimeCounter, 1000)
 }
@@ -526,7 +526,7 @@ function changeTexts() {
     document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
 
     document.getElementById("bPoints").innerHTML = "" + blackPoints;
-    document.getElementById("nTurn").innerHTML = turn;
+    document.getElementById("nTurn").innerHTML = capitalizeFirstLetter(turn);
     document.getElementById("wPoints").innerHTML = "" + whitePoints;
 }
 
@@ -592,4 +592,8 @@ function pad(val) {
     } else {
         return valString;
     }
-} 
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
