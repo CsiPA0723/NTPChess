@@ -10,7 +10,7 @@ input {
     font-size: 100%;
     border: 1px solid rgba(0, 0, 0, 0.8);
     text-align: center;
-    width: 50%;
+    width: 4vmax;
 }
 
 p > textarea {
@@ -33,6 +33,11 @@ table, td {
     border-collapse: collapse;
     text-align: center;
     border: 1px solid black;
+}
+
+img {
+    width: 40px;
+    height: 40px;
 }
 
 
@@ -63,106 +68,67 @@ table, td {
 /**/
 
 .grid-side-top0 {
+    align-self: flex-start;
     grid-area: top0;
-    vertical-align: text-top;
-    border-top: 2px solid rgba(0, 0, 0, 0.8);
-    border-left: 2px solid rgba(0, 0, 0, 0.8);
-    position: relative;
-}
-
-.grid-side-top0 p {
-    margin: 0;
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -50%)
 }
 
 /**/
 
 .grid-side-top1 {
+    align-self: flex-start;
+    padding: auto;
     grid-area: top1;
-    vertical-align: text-top;
-    border-top: 2px solid rgba(0, 0, 0, 0.8);
-    border-right: 2px solid rgba(0, 0, 0, 0.8);
-    position: relative;
 }
 
-.grid-side-top1 p {
-    margin: 0;
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translate(-50%, -50%)
+.grid-side-top1 table {
+    margin: 0px auto;
+    border: none;
+}
+
+.grid-side-top1 td {
+    border: none;
+    height: 80px;
+    width: 80px;
+    vertical-align: top;
 }
 
 /**/
 
 .grid-side-middle0 {
     grid-area: middle0;
-    vertical-align: middle;
-    border-left: 2px solid rgba(0, 0, 0, 0.8);
-    position: relative;
-}
-
-.grid-side-middle0 p {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%)
+    align-self: center;
 }
 
 /**/
 
 .grid-side-middle1 {
     grid-area: middle1;
-    vertical-align: middle;
-    border-right: 2px solid rgba(0, 0, 0, 0.8);
-    position: relative;
-}
-
-.grid-side-middle1 p {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%)
+    align-self: center;
 }
 
 /**/
 
 .grid-side-bottom0 {
+    align-self: flex-end;
     grid-area: bottom0;
-    vertical-align: text-bottom;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.8);
-    border-left: 2px solid rgba(0, 0, 0, 0.8);
-    position: relative;
-}
-
-.grid-side-bottom0 p {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%)
 }
 
 /**/
 
 .grid-side-bottom1 {
+    align-self: flex-end;
+    padding: auto;
     grid-area: bottom1;
-    position: relative;
-    vertical-align: text-bottom;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.8);
-    border-right: 2px solid rgba(0, 0, 0, 0.8);
-    position: relative;
 }
 
-.grid-side-bottom1 p {
-    margin: 0;
-    position: absolute;
-    top: 85%;
-    left: 50%;
-    transform: translate(-50%, -50%)
+.grid-side-bottom1 table {
+    margin: 0px auto;
+    border: none;
+}
+
+.grid-side-bottom1 td {
+    border: none;
+    height: 80px;
+    width: 80px;
+    vertical-align: bottom;
 }

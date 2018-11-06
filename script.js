@@ -53,6 +53,7 @@ function onLoad() {
     document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
     document.getElementById("information").innerHTML = information;
     changeTexts();
+    createPointPictures();
 
     document.getElementById("nTurn").innerHTML = "Starting";
 
@@ -64,7 +65,7 @@ function onClick(id) {
     if(DEBUG) console.log("onClick");
     if(DEBUG) debug(id);
     var figure = figures.get(id);
-    var selectedfigure = findIn(figures, "selected", true);
+    var selectedfigure = findIn(figures, "selected", true, true);
 
     if((figure || !selectedfigure) && figure && turn == figure.race) {
         if(selectedfigure) unselection(selectedfigure.id);
@@ -311,18 +312,40 @@ function unselection(id) {
             else cell.innerHTML = "";
             if(DEBUG) cell.style.color = "rgb(100, 200, 200)";
             else cell.style.color = "";
-            if(tile.color != "green") {
+            if(tile.color != "rgb(76, 181, 7)") {
                 cell.style.backgroundColor = tile.originalColor;
                 changeTile(tile, false, cell.style.backgroundColor);
+            } else if(tile.recolor) {
+                tile.recolor = false;
+                cell.style.backgroundColor = tile.originalColor;
+                changeTile(tile, false, cell.style.backgroundColor);
+                if(DEBUG) {
+                    console.log("GreenTile.recolor = false");
+                    console.log(tile.id);
+                    debug(tile.id);
+                }
             } else {
                 changeTile(tile, false);
             }
+            
         }
     }
 }
 
 function move(frId, toId) {
     if(DEBUG) console.log("move");
+
+    var greenTiles = findIn(tiles, "color", "rgb(76, 181, 7)");
+    for(var i = 0; i < greenTiles.length; i++) {
+        var greenTile = tiles.get(greenTiles[i]);
+        greenTile.recolor = true;
+        if(DEBUG) {
+            console.log("GreenTile.recolor = true");
+            console.log(greenTile.id);
+        }
+    }
+
+
     var tile = tiles.get(toId);
     if(!tile.movable) return;
 
@@ -333,11 +356,13 @@ function move(frId, toId) {
     if(turn == "white") {
         if(toFigure && toFigure.race != turn) {
             whitePoints += toFigure.point;
+            document.getElementById(`${toFigure.race}_${toFigure.name}`).innerHTML++;
         }
         turn = "black";
     } else {
         if(toFigure && toFigure.race != turn) {
             blackPoints += toFigure.point;
+            document.getElementById(`${toFigure.race}_${toFigure.name}`).innerHTML++;
         }
         turn = "white";
 
@@ -350,13 +375,19 @@ function move(frId, toId) {
     figures.delete(frId);
     figures.set(toId, nToFigure);
     document.getElementById(frId).style.backgroundImage = "";
+    document.getElementById(frId).style.backgroundColor = "rgb(76, 181, 7)";
     document.getElementById(toId).style.backgroundImage = nToFigure.picture;
+    document.getElementById(toId).style.backgroundColor = "rgb(76, 181, 7)";
     tiles.get(frId).figure = null;
+    tiles.get(frId).color = "rgb(76, 181, 7)";
+    tile.color = "rgb(76, 181, 7)";
     tile.figure = nToFigure;
     if(DEBUG) debug(toId);
 
-    
+    lastMovedFigure = nToFigure;
+
     unselection(toId);
+
 
     if(!ended) changeTexts();
 }
@@ -418,6 +449,96 @@ function tableCreate() {
     body.appendChild(tbl);
 }
 
+function createPointPictures() {
+    var bPoints = document.getElementById("bPoints");
+    var wPoints = document.getElementById("wPoints");
+
+    //-----------------------------------
+
+    wPoints.innerHTML += "<p id='wPoint'>White's points: 0</p>";
+
+    var tbl = document.createElement('table');
+    tbl.id = "black_point_table";
+    var tbdy = document.createElement('tbody');
+    var tr = document.createElement('tr');
+    for (let i = 0; i < 4; i++) {
+        td = document.createElement('td');
+        td.innerHTML = "0";
+        td.id = `black_${figureOrder[i].name}`;
+        
+        tr.appendChild(td);
+    }
+    td = document.createElement('td');
+    td.innerHTML = "0";
+    td.id = `black_pawn`;
+        
+    tr.appendChild(td);
+    tbdy.appendChild(tr);
+
+    tr = document.createElement('tr');
+    for (let i = 0; i < 4; i++) {
+        var td = document.createElement('td');
+        td.style.backgroundSize = "100%";
+        td.style.backgroundRepeat = "no-repeat";
+        td.style.backgroundImage = `url("./BlackCMs/black_${figureOrder[i].name}.png")`;
+        
+        tr.appendChild(td);
+    }
+    var td = document.createElement('td');
+    td.style.backgroundSize = "100%";
+    td.style.backgroundRepeat = "no-repeat";
+    td.style.backgroundImage = `url("./BlackCMs/black_pawn.png")`;
+
+    tr.appendChild(td);
+    tbdy.appendChild(tr);
+
+    tbl.appendChild(tbdy);
+    wPoints.appendChild(tbl);
+
+    //-----------------------------------------
+
+    tbl = document.createElement('table');
+    tbl.id = "white_point_table";
+    tbdy = document.createElement('tbody');
+
+    tr = document.createElement('tr');
+    for (let i = 0; i < 4; i++) {
+        var td = document.createElement('td');
+        td.style.backgroundSize = "100%";
+        td.style.backgroundRepeat = "no-repeat";
+        td.style.backgroundImage = `url("./WhiteCMs/white_${figureOrder[i].name}.png")`;
+        
+        tr.appendChild(td);
+    }
+    td = document.createElement('td');
+    td.style.backgroundSize = "100%";
+    td.style.backgroundRepeat = "no-repeat";
+    td.style.backgroundImage = `url("./WhiteCMs/white_pawn.png")`;
+        
+    tr.appendChild(td);
+    tbdy.appendChild(tr);
+
+    tr = document.createElement('tr');
+    for (let i = 0; i < 4; i++) {
+        td = document.createElement('td');
+        td.innerHTML = "0";
+        td.id = `white_${figureOrder[i].name}`;
+        
+        tr.appendChild(td);
+    }
+    td = document.createElement('td');
+    td.innerHTML = "0";
+    td.id = `white_pawn`;
+    
+    tr.appendChild(td);
+    tbdy.appendChild(tr);
+
+    tbl.appendChild(tbdy);
+    bPoints.appendChild(tbl);
+
+    bPoints.innerHTML += "<p id='bPoint'>Black's points: 0</p>";
+}
+
 function createFigureObj(id, name, race, x, y, point, picture) {
     var figure = {
         id: id,
@@ -430,7 +551,6 @@ function createFigureObj(id, name, race, x, y, point, picture) {
         point: point,
         picture: picture,
         selected: false,
-        killed: false,
     };
     return figure;
 }
@@ -441,30 +561,42 @@ function createTileObj(id, figure, color) {
         figure: figure,
         color: color,
         originalColor: color,
-        movable: false
+        movable: false,
+        recolor: false
     };
     return tile;
 }
 
 function changeTile(tile, movable, color, figure) {
     if(tile) {
-        if(movable) tile.color = color;
-        if(color) tile.movable = movable;
+        if(movable) tile.movable = movable;
+        if(color) tile.color = color; 
         if(figure) tile.figure = figure;
     } 
 }
 
-function findIn(map, find, value) {
-    let key;
-    let firstFound = false;
-    map.forEach((v, k) => {
-        if(v[`${find}`] == value && !firstFound) {
-            key = k;
-            firstFound = true;
-        }
-    })
-    if(key) return map.get(key);
-    return false;
+function findIn(map, find, value, first) {
+    if(first) {
+        var key;
+        var firsFound = false;
+        map.forEach((v, k) => {
+            if(v[`${find}`] == value && !firsFound) {
+                key = k;
+                firsFound = true;
+            }
+        })
+        if(key) return map.get(key);
+        return false;
+    } else {
+        var keys = [];
+        map.forEach((v, k) => {
+            if(v[`${find}`] == value) {
+                keys.push(k);
+            }
+        })
+        if(keys.length > 0 || keys) return keys;
+        return false;
+    }
 }
 
 function debug(id) {
@@ -480,8 +612,7 @@ function debug(id) {
             }
             point: ${figures.get(id).point}
             picture: ${figures.get(id).picture}
-            selected: ${figures.get(id).selected}
-            killed: ${figures.get(id).killed}`
+            selected: ${figures.get(id).selected}`
         );
         if(DEBUG) console.log(
             `TILE
@@ -517,17 +648,25 @@ function onSubmit() {
     document.getElementById("turn-input").setAttribute("readonly", true);
     document.getElementById("turn-input-button").setAttribute("disabled", true);
     document.getElementById("table-grid").style.backgroundColor = "";
-    document.getElementById("nTurn").innerHTML = capitalizeFirstLetter(turn);
+
+    var Turn = capitalizeFirstLetter(turn);
+    document.getElementById("nTurn").innerHTML = Turn + `<img align="center" src="./${Turn}CMs/${turn}_king.png" />`;
 
     timeCounter = setInterval(TimeCounter, 1000)
 }
 
 function changeTexts() {
-    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
 
-    document.getElementById("bPoints").innerHTML = "" + blackPoints;
-    document.getElementById("nTurn").innerHTML = capitalizeFirstLetter(turn);
-    document.getElementById("wPoints").innerHTML = "" + whitePoints;
+    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
+    var Turn = capitalizeFirstLetter(turn);
+    document.getElementById("nTurn").innerHTML = Turn + `<img align="center" src="./${Turn}CMs/${turn}_king.png" />`;
+
+    var bPoint = document.getElementById("bPoint");
+    var wPoint = document.getElementById("wPoint");
+
+    if(bPoint) bPoint.innerHTML = "Black's points: " + blackPoints;
+    if(wPoint) wPoint.innerHTML = "White's points: " + whitePoints;
+    
 }
 
 function reset() {
