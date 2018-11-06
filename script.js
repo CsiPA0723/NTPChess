@@ -50,7 +50,11 @@ var ended = false;
 
 var turn = "white";
 var maxTurn = 20;
-var nTurn = 0;
+var nTurn = 1;
+
+var main;
+var timeCounter;
+var time = 0;
 
 var whitePoints = 0;
 var blackPoints = 0;
@@ -61,23 +65,9 @@ function onLoad() {
     document.getElementById("information").innerHTML = information;
     changeTexts();
 
-    var main = setInterval(() => {
-        if(ended) {
-            document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+    document.getElementById("nTurn").innerHTML = "Starting";
 
-            if(whitePoints > blackPoints) {
-                document.getElementById("turns").innerHTML += "<br>Winner: White";
-            } else if(whitePoints < blackPoints) {
-                document.getElementById("turns").innerHTML += "<br>Winner: Black";
-            } else {
-                document.getElementById("turns").innerHTML += "<br>Draw";
-            }
-
-            reset();
-
-            clearInterval(main);
-        }
-    }, 250);
+    main = setInterval(Main, 250);
 }
 
 function onClick(id) {
@@ -530,23 +520,30 @@ function onDebug() {
 }
 
 function onSubmit() {
+    if(ended) reset();
     maxTurn = document.getElementById("turn-input").value;
+    if(maxTurn < nTurn) maxTurn = nTurn;
     document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
     started = true;
     document.getElementById("turn-input").setAttribute("readonly", true);
     document.getElementById("turn-input-button").setAttribute("disabled", true);
     document.getElementById("table-grid").style.backgroundColor = "";
+    document.getElementById("nTurn").innerHTML = turn;
+
+    timeCounter = setInterval(TimeCounter, 1000)
 }
 
 function changeTexts() {
     document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
 
     document.getElementById("bPoints").innerHTML = "" + blackPoints;
-    document.getElementById("nTurn").innerHTML = "" + turn;
+    document.getElementById("nTurn").innerHTML = turn;
     document.getElementById("wPoints").innerHTML = "" + whitePoints;
 }
 
 function reset() {
+    document.getElementById("timer").innerHTML = "00:00:00";
+    time = 0;
     figures = new Map();
     tiles = new Map();
 
@@ -555,17 +552,59 @@ function reset() {
 
     turn = "white";
     maxTurn = 20;
-    nTurn = 0;
+    nTurn = 1;
 
     whitePoints = 0;
     blackPoints = 0;
-    document.getElementById("turn-input").removeAttribute("readonly");
-    document.getElementById("turn-input-button").removeAttribute("disabled");
 
-    document.getElementById("table").innerHTML = "";
+    document.getElementById("table").remove();
     tableCreate();
 
-    document.getElementById("turn-input").value = maxTurn;
+    main = setInterval(Main, 250);
+    timeCounter = setInterval(TimeCounter, 1000);
 
     changeTexts();
+
+    document.getElementById("nTurn").innerHTML = "Starting";
 }
+
+function Main() {
+    if(ended) {
+        document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+
+        if(whitePoints > blackPoints) {
+            document.getElementById("turns").innerHTML += "<br>Winner: White";
+        } else if(whitePoints < blackPoints) {
+            document.getElementById("turns").innerHTML += "<br>Winner: Black";
+        } else {
+            document.getElementById("turns").innerHTML += "<br>Draw";
+        }
+        document.getElementById("nTurn").innerHTML = "Ended";
+        document.getElementById("turn-input").removeAttribute("readonly");
+        document.getElementById("turn-input-button").removeAttribute("disabled");
+
+        clearInterval(main);
+        clearInterval(timeCounter);
+
+        delete main;
+        delete timeCounter;
+    }
+}
+
+function TimeCounter() {
+    ++time;
+    var hour = pad(Math.floor(time / 3600));
+    var minute = pad(Math.floor((time - hour * 3600) / 60));
+    var seconds = pad(time - (hour * 3600 + minute * 60));
+
+    document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
+}
+
+function pad(val) {
+    var valString = val + "";
+    if (valString.length < 2) {
+        return "0" + valString;
+    } else {
+        return valString;
+    }
+} 
