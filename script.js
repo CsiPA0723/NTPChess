@@ -401,8 +401,13 @@ function move(frId, toId) {
 
     unselection(toId);
 
+    if(!ended) {
+        changeTexts();
 
-    if(!ended) changeTexts();
+        if(whitePoints >= 25 || blackPoints >= 25) {
+            ended = true;
+        }
+    }
 }
 
 function checkTile(cell, tile, figure) {
