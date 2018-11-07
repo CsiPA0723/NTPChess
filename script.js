@@ -1,3 +1,5 @@
+//Információ a játékról
+
 const information =
 `A játék akkor kezdődik el, ha megadta a maximum körök számát és rá nyomott a "Submit" gombra.
 
@@ -9,6 +11,8 @@ const information =
 
 Pontok:
 Gyalog 1, Futó 2, Király 2, Bástya 3, Vezér 5`;
+
+//A figurák sorrendbe rakva és pontok hozzá rendelve
 
 const figureOrder = [
     {
@@ -37,26 +41,28 @@ const figureOrder = [
     }
 ];
 
-const MAX_TILE_REACH = 4;
-const WIDTH = figureOrder.length;
-const HEIGTH = 10;
-var DEBUG = false;
-var figures = new Map();
-var tiles = new Map();
+const MAX_TILE_REACH = 4; //Maximum lépés határ
+const WIDTH = figureOrder.length; //Tábla szélesség
+const HEIGTH = 10; //Tábla magassága
+var DEBUG = false; //DEBUG
+var figures = new Map(); //figurák
+var tiles = new Map(); //mezők
 
-var started = false;
-var ended = false;
+var started = false; //Elindult-e
+var ended = false; //Befejeződött-e
 
-var turn = "white";
-var maxTurn = 20;
-var nTurn = 1;
+var turn = "white"; //jelenlegi kör
+var maxTurn = 20; //maximum körök száma
+var nTurn = 1; // jelenlegi kör számlálója
 
-var main;
-var timeCounter;
-var time = 0;
+var main; //A fő interval
+var timeCounter; //az idő számláló interval
+var time = 0; //eltelt idő
 
-var whitePoints = 0;
-var blackPoints = 0;
+var whitePoints = 0; //Fehér játékos pontja
+var blackPoints = 0; //Fekete játékos pontja
+
+//Amikor betölt az oldal ez fog lefutni először
 
 function onLoad() {
     tableCreate();
@@ -69,6 +75,8 @@ function onLoad() {
 
     main = setInterval(Main, 250);
 }
+
+//Ha valamelyik sakk bábura kattintunk akkor ez fog lefutni.
 
 function onClick(id) {
     if(!started || ended) {
@@ -87,6 +95,8 @@ function onClick(id) {
         move(selectedfigure.id, id);
     }
 }
+
+//A bábuk lépési területét térképezi fel és készíti el
 
 function selection(id) {
     if(DEBUG) console.log("selection");
@@ -311,6 +321,8 @@ function selection(id) {
     }
 }
 
+//A tábla cellák színének visszaálításáért felel
+
 function unselection(id) {
     if(DEBUG) console.log("unselection");
     var figure = figures.get(id);
@@ -344,6 +356,8 @@ function unselection(id) {
         }
     }
 }
+
+//A bábub mozgatásásért felelő funkció
 
 function move(frId, toId) {
     if(DEBUG) console.log("move");
@@ -410,6 +424,8 @@ function move(frId, toId) {
     }
 }
 
+//Ellenőrzi hogy a tile-on van-e figura.
+
 function checkTile(cell, tile, figure) {
     if(tile.figure) {
         if(tile.figure.race != figure.race) {
@@ -423,6 +439,8 @@ function checkTile(cell, tile, figure) {
     changeTile(tile, true, cell.style.backgroundColor);
     return false;
 }
+
+//Tábla felépítése.
 
 function tableCreate() {
     let whOrBl = false;
@@ -466,6 +484,8 @@ function tableCreate() {
     tbl.appendChild(tbdy);
     body.appendChild(tbl);
 }
+
+//A jobb oldalon lévő sávban a pontokat építi fel és annak a rajzait mellé.
 
 function createPointPictures() {
     var bPoints = document.getElementById("bPoints");
@@ -557,6 +577,8 @@ function createPointPictures() {
     bPoints.innerHTML += "<p id='bPoint'>Black's points: 0</p>";
 }
 
+//Egy figura objektum constructor
+
 function createFigureObj(id, name, race, x, y, point, picture) {
     var figure = {
         id: id,
@@ -573,6 +595,8 @@ function createFigureObj(id, name, race, x, y, point, picture) {
     return figure;
 }
 
+//Egy tile objektum constructor
+
 function createTileObj(id, figure, color) {
     var tile = {
         id: id,
@@ -585,6 +609,8 @@ function createTileObj(id, figure, color) {
     return tile;
 }
 
+//A tile-nak a színét változtatja és azt, hogy rá lehet lépni-e vagy nem
+
 function changeTile(tile, movable, color, figure) {
     if(tile) {
         tile.movable = movable;
@@ -592,6 +618,127 @@ function changeTile(tile, movable, color, figure) {
         if(figure) tile.figure = figure;
     } 
 }
+
+//A debug gomv váltásáért felel
+
+function onDebug() {
+    DEBUG = !DEBUG;
+    document.getElementById("debug-button").innerText = `DEBUG ${DEBUG ? "ON" : "OFF"}`;
+}
+
+//A maxTurn bekérésért felel és egyéb más kinézet változtatásért
+
+function onSubmit() {
+    if(ended) reset();
+    maxTurn = document.getElementById("turn-input").value;
+    if(maxTurn < nTurn) maxTurn = nTurn;
+    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
+    started = true;
+    document.getElementById("turn-input").setAttribute("readonly", true);
+    document.getElementById("turn-input-button").setAttribute("disabled", true);
+    document.getElementById("table-grid").style.backgroundColor = "";
+
+    var Turn = capitalizeFirstLetter(turn);
+    document.getElementById("nTurn").innerHTML = Turn + `<img align="center" src="./${Turn}CMs/${turn}_king.png" />`;
+
+    timeCounter = setInterval(TimeCounter, 1000)
+}
+
+//Frissíti a szövegeket
+
+function changeTexts() {
+
+    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
+    var Turn = capitalizeFirstLetter(turn);
+    document.getElementById("nTurn").innerHTML = Turn + `<img align="center" src="./${Turn}CMs/${turn}_king.png" />`;
+
+    var bPoint = document.getElementById("bPoint");
+    var wPoint = document.getElementById("wPoint");
+
+    if(bPoint) bPoint.innerHTML = "Black's points: " + blackPoints;
+    if(wPoint) wPoint.innerHTML = "White's points: " + whitePoints;
+    
+}
+
+//Visszaálítja a változókat alaphelyzetbe
+
+function reset() {
+    document.getElementById("timer").innerHTML = "00:00:00";
+    time = 0;
+    figures = new Map();
+    tiles = new Map();
+
+    started = false;
+    ended = false;
+
+    turn = "white";
+    maxTurn = 20;
+    nTurn = 1;
+
+    whitePoints = 0;
+    blackPoints = 0;
+
+    document.getElementById("table").remove();
+    tableCreate();
+
+    main = setInterval(Main, 250);
+
+    changeTexts();
+
+    document.getElementById("nTurn").innerHTML = "Starting";
+}
+
+//A fő interval-nak a funkciója
+
+function Main() {
+    if(ended) {
+        document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+
+        if(whitePoints > blackPoints) {
+            document.getElementById("turns").innerHTML += "<br>Winner: White";
+        } else if(whitePoints < blackPoints) {
+            document.getElementById("turns").innerHTML += "<br>Winner: Black";
+        } else {
+            document.getElementById("turns").innerHTML += "<br>Draw";
+        }
+        document.getElementById("nTurn").innerHTML = "Ended";
+        document.getElementById("turn-input").removeAttribute("readonly");
+        document.getElementById("turn-input-button").removeAttribute("disabled");
+
+        clearInterval(timeCounter);
+        clearInterval(main);
+    }
+}
+
+//A számláó interval funkciója
+
+function TimeCounter() {
+    ++time;
+    var hour = pad(Math.floor(time / 3600));
+    var minute = pad(Math.floor((time - hour * 3600) / 60));
+    var seconds = pad(time - (hour * 3600 + minute * 60));
+
+    document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
+}
+
+//Egyszerű pad-ing, hogy szépen nézzen ki számláló
+
+function pad(val) {
+    var valString = val + "";
+    if (valString.length < 2) {
+        return "0" + valString;
+    } else {
+        return valString;
+    }
+}
+
+//Az első betüt naggyá teszi
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+//Egy egyszerű keresési funkció a map változókhoz (Még elég primítv)
 
 function findIn(map, find, value, first) {
     if(first) {
@@ -616,6 +763,8 @@ function findIn(map, find, value, first) {
         return false;
     }
 }
+
+//Szimpla debug
 
 function debug(id) {
     if(figures.get(id)) {
@@ -650,107 +799,4 @@ function debug(id) {
             movable: ${tiles.get(id).movable}`
         );
     }
-}
-
-function onDebug() {
-    DEBUG = !DEBUG;
-    document.getElementById("debug-button").innerText = `DEBUG ${DEBUG ? "ON" : "OFF"}`;
-}
-
-function onSubmit() {
-    if(ended) reset();
-    maxTurn = document.getElementById("turn-input").value;
-    if(maxTurn < nTurn) maxTurn = nTurn;
-    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
-    started = true;
-    document.getElementById("turn-input").setAttribute("readonly", true);
-    document.getElementById("turn-input-button").setAttribute("disabled", true);
-    document.getElementById("table-grid").style.backgroundColor = "";
-
-    var Turn = capitalizeFirstLetter(turn);
-    document.getElementById("nTurn").innerHTML = Turn + `<img align="center" src="./${Turn}CMs/${turn}_king.png" />`;
-
-    timeCounter = setInterval(TimeCounter, 1000)
-}
-
-function changeTexts() {
-
-    document.getElementById("turns").innerHTML = `Turn: ${nTurn} / ${maxTurn}`;
-    var Turn = capitalizeFirstLetter(turn);
-    document.getElementById("nTurn").innerHTML = Turn + `<img align="center" src="./${Turn}CMs/${turn}_king.png" />`;
-
-    var bPoint = document.getElementById("bPoint");
-    var wPoint = document.getElementById("wPoint");
-
-    if(bPoint) bPoint.innerHTML = "Black's points: " + blackPoints;
-    if(wPoint) wPoint.innerHTML = "White's points: " + whitePoints;
-    
-}
-
-function reset() {
-    document.getElementById("timer").innerHTML = "00:00:00";
-    time = 0;
-    figures = new Map();
-    tiles = new Map();
-
-    started = false;
-    ended = false;
-
-    turn = "white";
-    maxTurn = 20;
-    nTurn = 1;
-
-    whitePoints = 0;
-    blackPoints = 0;
-
-    document.getElementById("table").remove();
-    tableCreate();
-
-    main = setInterval(Main, 250);
-
-    changeTexts();
-
-    document.getElementById("nTurn").innerHTML = "Starting";
-}
-
-function Main() {
-    if(ended) {
-        document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
-
-        if(whitePoints > blackPoints) {
-            document.getElementById("turns").innerHTML += "<br>Winner: White";
-        } else if(whitePoints < blackPoints) {
-            document.getElementById("turns").innerHTML += "<br>Winner: Black";
-        } else {
-            document.getElementById("turns").innerHTML += "<br>Draw";
-        }
-        document.getElementById("nTurn").innerHTML = "Ended";
-        document.getElementById("turn-input").removeAttribute("readonly");
-        document.getElementById("turn-input-button").removeAttribute("disabled");
-
-        clearInterval(timeCounter);
-        clearInterval(main);
-    }
-}
-
-function TimeCounter() {
-    ++time;
-    var hour = pad(Math.floor(time / 3600));
-    var minute = pad(Math.floor((time - hour * 3600) / 60));
-    var seconds = pad(time - (hour * 3600 + minute * 60));
-
-    document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
-}
-
-function pad(val) {
-    var valString = val + "";
-    if (valString.length < 2) {
-        return "0" + valString;
-    } else {
-        return valString;
-    }
-}
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
