@@ -1,4 +1,14 @@
-const information = `information`;
+const information =
+`A játék akkor kezdődik el, ha megadta a maximum körök számát és rá nyomott a "Submit" gombra.
+
+- Nincsen sakk, sem matt, a Király is csak egy leüthető figura, mint a többi.
+- A Gyalog tud visszafelé lépni is.
+- A Bástyának, Futónak, és Vezérnek a lépése maximum 4 mező távolságra korlátozott.
+- Az ellenfél alapvonalát elérő gyalog nem alakul át semmivé, hanem úgy marad.
+- Az a játékos nyer, aki először szedi le az ellenfele minden bábuját vagy akinek a legtöbb pontja van a maximum kőr elértekor.
+
+Pontok:
+Gyalog 1, Futó 2, Király 2, Bástya 3, Vezér 5`;
 
 const figureOrder = [
     {
@@ -61,7 +71,10 @@ function onLoad() {
 }
 
 function onClick(id) {
-    if(!started || ended) return;
+    if(!started || ended) {
+        alert("You need to submit the maximum turn to start the game!");
+        return;
+    }
     if(DEBUG) console.log("onClick");
     if(DEBUG) debug(id);
     var figure = figures.get(id);
@@ -569,8 +582,8 @@ function createTileObj(id, figure, color) {
 
 function changeTile(tile, movable, color, figure) {
     if(tile) {
-        if(movable) tile.movable = movable;
-        if(color) tile.color = color; 
+        tile.movable = movable;
+        tile.color = color; 
         if(figure) tile.figure = figure;
     } 
 }
