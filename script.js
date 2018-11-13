@@ -41,6 +41,14 @@ const figureOrder = [
     }
 ];
 
+//Színek
+
+const green = "rgb(76, 181, 7)";
+const brown = "rgb(130, 68, 24)";
+const lightbrown = "rgb(242, 210, 147)";
+const red = "rgb(200, 0, 0)";
+const lightblue = "lightblue";
+
 const MAX_TILE_REACH = 4; //Maximum lépés határ
 const WIDTH = figureOrder.length; //Tábla szélesség
 const HEIGTH = 10; //Tábla magassága
@@ -66,7 +74,7 @@ var blackPoints = 0; //Fekete játékos pontja
 
 function onLoad() {
     tableCreate();
-    document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+    document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)"; //Szürke
     document.getElementById("information").innerHTML = information;
     changeTexts();
     createPointPictures();
@@ -127,7 +135,7 @@ function selection(id) {
                 var tile = tiles.get(rightCell.id);
     
                 if(tile.figure && tile.figure.race != figure.race) {
-                    rightCell.style.backgroundColor = "rgb(200, 0, 0)";
+                    rightCell.style.backgroundColor = red;
                     changeTile(tile, true, rightCell.style.backgroundColor);
                 }
             }
@@ -135,7 +143,7 @@ function selection(id) {
                 var tile = tiles.get(leftCell.id);
     
                 if(tile.figure && tile.figure.race != figure.race) {
-                    leftCell.style.backgroundColor = "rgb(200, 0, 0)";
+                    leftCell.style.backgroundColor = red;
                     changeTile(tile, true, leftCell.style.backgroundColor);
                 }
             }
@@ -149,7 +157,7 @@ function selection(id) {
 
             if(tile.figure) break;
             else {
-                cell.style.backgroundColor = "lightblue";
+                cell.style.backgroundColor = lightblue;
                 changeTile(tile, true, cell.style.backgroundColor);
             }
         }
@@ -161,7 +169,7 @@ function selection(id) {
 
             if(tile.figure) break;
             else {
-                cell.style.backgroundColor = "lightblue";
+                cell.style.backgroundColor = lightblue;
                 changeTile(tile, true, cell.style.backgroundColor);
             }
         }
@@ -210,13 +218,13 @@ function selection(id) {
 
                 if(tile.figure) {
                     if(tile.figure.race != figure.race) {
-                        cell.style.backgroundColor = "rgb(200, 0, 0)";
+                        cell.style.backgroundColor = red;
                         changeTile(tile, true, cell.style.backgroundColor);
                     }
                     continue;
                 }
 
-                cell.style.backgroundColor = "lightblue";
+                cell.style.backgroundColor = lightblue;
                 changeTile(tile, true, cell.style.backgroundColor);
             }
         }
@@ -337,7 +345,7 @@ function unselection(id) {
             else cell.innerHTML = "";
             if(DEBUG) cell.style.color = "rgb(100, 200, 200)";
             else cell.style.color = "";
-            if(tile.color != "rgb(76, 181, 7)") {
+            if(tile.color != green) {
                 cell.style.backgroundColor = tile.originalColor;
                 changeTile(tile, false, cell.style.backgroundColor);
             } else if(tile.recolor) {
@@ -362,7 +370,7 @@ function unselection(id) {
 function move(frId, toId) {
     if(DEBUG) console.log("move");
 
-    var greenTiles = findIn(tiles, "color", "rgb(76, 181, 7)");
+    var greenTiles = findIn(tiles, "color", green);
     for(var i = 0; i < greenTiles.length; i++) {
         var greenTile = tiles.get(greenTiles[i]);
         greenTile.recolor = true;
@@ -402,12 +410,12 @@ function move(frId, toId) {
     figures.delete(frId);
     figures.set(toId, nToFigure);
     document.getElementById(frId).style.backgroundImage = "";
-    document.getElementById(frId).style.backgroundColor = "rgb(76, 181, 7)";
+    document.getElementById(frId).style.backgroundColor = green;
     document.getElementById(toId).style.backgroundImage = nToFigure.picture;
-    document.getElementById(toId).style.backgroundColor = "rgb(76, 181, 7)";
+    document.getElementById(toId).style.backgroundColor = green;
     tiles.get(frId).figure = null;
-    tiles.get(frId).color = "rgb(76, 181, 7)";
-    tile.color = "rgb(76, 181, 7)";
+    tiles.get(frId).color = green;
+    tile.color = green;
     tile.figure = nToFigure;
     if(DEBUG) debug(toId);
 
@@ -429,13 +437,13 @@ function move(frId, toId) {
 function checkTile(cell, tile, figure) {
     if(tile.figure) {
         if(tile.figure.race != figure.race) {
-            cell.style.backgroundColor = "rgb(200, 0, 0)";
+            cell.style.backgroundColor = red;
             changeTile(tile, true, cell.style.backgroundColor);
         }
         return true;
     }
 
-    cell.style.backgroundColor = "lightblue";
+    cell.style.backgroundColor = lightblue;
     changeTile(tile, true, cell.style.backgroundColor);
     return false;
 }
@@ -454,7 +462,7 @@ function tableCreate() {
             var td = document.createElement('td');
             if(DEBUG) td.innerHTML = `${j} ${i}`;
             if(DEBUG) td.style.color = "rgb(100, 200, 200)";
-            td.style.backgroundColor = `${whOrBl ? "rgb(242, 210, 147)": "rgb(130, 68, 24)"}`;
+            td.style.backgroundColor = `${whOrBl ? lightbrown: brown}`;
             td.id = `td(${j}_${i})`;
             td.style.backgroundSize = "100%";
             td.style.backgroundRepeat = "no-repeat";
@@ -692,7 +700,7 @@ function reset() {
 
 function Main() {
     if(ended) {
-        document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+        document.getElementById("table-grid").style.backgroundColor = "rgba(0, 0, 0, 0.2)"; //Szürke
 
         if(whitePoints > blackPoints) {
             document.getElementById("turns").innerHTML += "<br>Winner: White";
@@ -713,7 +721,7 @@ function Main() {
 //A számláó interval funkciója
 
 function TimeCounter() {
-    ++time;
+    time++;
     var hour = pad(Math.floor(time / 3600));
     var minute = pad(Math.floor((time - hour * 3600) / 60));
     var seconds = pad(time - (hour * 3600 + minute * 60));
